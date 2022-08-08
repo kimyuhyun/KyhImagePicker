@@ -3,17 +3,18 @@ plugins {
     id 'maven-publish'
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-//            from components.java
-            groupId = 'com.github.kimyuhyun'
-            artifactId = 'KyhImagePicker'
-            version = '1.0.4'
+afterEvaluate {
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.release
+                groupId = 'com.github.kimyuhyun'
+                artifactId = 'KyhImagePicker'
+                version = '1.0.5'
+            }
         }
     }
 }
-
 
 
 android {
