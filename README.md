@@ -26,6 +26,7 @@ KyhImagePicker.of(getApplicationContext())
     .setTitle("Select a picture")
     .setLimitCount(5)
     .setLimitMessage("You can select up to five images.")
+    .setNoSelectionMessage("No image selected.")
     .open(startActivityResult);
 ```
 
