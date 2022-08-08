@@ -13,6 +13,12 @@ allprojects {
 }
 ```
 
+```
+dependencies {
+    implementation 'com.github.kimyuhyun:KyhImagePicker:1.0.4'
+}
+```
+
 
 - Insert the code below into the button to run the image picker.
 ```
@@ -41,3 +47,4 @@ public ActivityResultLauncher<Intent> startActivityResult = registerForActivityR
         }
     });
 ```
+
