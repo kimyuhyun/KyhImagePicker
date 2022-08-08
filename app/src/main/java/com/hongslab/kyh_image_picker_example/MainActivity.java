@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle("사진선택")
                 .setLimitCount(5)
                 .setLimitMessage("이미지는 5개까지 선택 할 수 있습니다.")
+                .setNoSelectionMessage("선택된 이미지가 없습니다.")
                 .open(startActivityResult);
 
     }

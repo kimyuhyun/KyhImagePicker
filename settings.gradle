@@ -10,8 +10,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 }
-rootProject.name = "kyh_image_picker"
+rootProject.name = "kyh_image_picker_example"
 include ':app'
 include ':kyh_image_picker'

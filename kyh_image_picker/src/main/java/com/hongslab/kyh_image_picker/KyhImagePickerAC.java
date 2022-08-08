@@ -50,6 +50,7 @@ public class KyhImagePickerAC extends BaseAC {
     private GalleryAdapter mGalleryAdapter;
     private int mLimitCount = 1;
     private String mLimitMessage = "";
+    private String mNoSelectionMessage = "";
 
     Toolbar tool_bar;
     FrameLayout fl_preview;
@@ -66,6 +67,7 @@ public class KyhImagePickerAC extends BaseAC {
 
         mLimitCount = getIntent().getIntExtra("limit_count", 1);
         mLimitMessage = getIntent().getStringExtra("limit_message");
+        mNoSelectionMessage = getIntent().getStringExtra("no_selection_message");
 
         tool_bar.setTitle(getIntent().getStringExtra("title"));
         setSupportActionBar(tool_bar);
@@ -246,6 +248,11 @@ public class KyhImagePickerAC extends BaseAC {
                 if (row.getSeq() > -1) {
                     list.add(row);
                 }
+            }
+
+            if (list.size() == 0) {
+                Toast.makeText(getApplicationContext(), mNoSelectionMessage, Toast.LENGTH_SHORT).show();
+                return true;
             }
 
             //ASC 정렬!
