@@ -15,7 +15,7 @@ allprojects {
 
 ```
 dependencies {
-    implementation 'com.github.kimyuhyun:KyhImagePicker:1.0.4'
+    implementation 'com.github.kimyuhyun:KyhImagePicker:1.0.5'
 }
 ```
 
