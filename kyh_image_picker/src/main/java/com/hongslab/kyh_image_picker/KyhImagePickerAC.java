@@ -17,6 +17,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -57,6 +58,15 @@ public class KyhImagePickerAC extends BaseAC {
     RecyclerView recycler_view;
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().setStatusBarColor(Color.parseColor("#000000"));
+            getWindow().setNavigationBarColor(Color.parseColor("#000000"));
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kyh_image_picker);
@@ -67,7 +77,13 @@ public class KyhImagePickerAC extends BaseAC {
 
         mLimitCount = getIntent().getIntExtra("limit_count", 1);
         mLimitMessage = getIntent().getStringExtra("limit_message");
+        if (mLimitMessage == null) {
+            mLimitMessage = "";
+        }
         mNoSelectionMessage = getIntent().getStringExtra("no_selection_message");
+        if (mNoSelectionMessage == null) {
+            mNoSelectionMessage = "";
+        }
 
         tool_bar.setTitle(getIntent().getStringExtra("title"));
         setSupportActionBar(tool_bar);
@@ -94,6 +110,7 @@ public class KyhImagePickerAC extends BaseAC {
                 if (mList.get(pos).isChoose() && !mList.get(pos).isToogle()) {
                     //DESC 정렬해서 가장 큰수를 가져온다!
                     int seq = Collections.max(mList, new BaseAC.compPopulation()).getSeq();
+
                     if (seq >= mLimitCount - 1) {
                         Toast.makeText(getApplicationContext(), mLimitMessage, Toast.LENGTH_SHORT).show();
                         return;
@@ -256,16 +273,13 @@ public class KyhImagePickerAC extends BaseAC {
             }
 
             //ASC 정렬!
-            Collections.sort(list, new Comparator<DataVO>() {
-                @Override
-                public int compare(DataVO s1, DataVO s2) {
-                    if (s1.getSeq() < s2.getSeq()) {
-                        return -1;
-                    } else if (s1.getSeq() > s2.getSeq()) {
-                        return 1;
-                    }
-                    return 0;
+            Collections.sort(list, (s1, s2) -> {
+                if (s1.getSeq() < s2.getSeq()) {
+                    return -1;
+                } else if (s1.getSeq() > s2.getSeq()) {
+                    return 1;
                 }
+                return 0;
             });
 
             ArrayList<String> list2 = new ArrayList<>();
