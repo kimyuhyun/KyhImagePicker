@@ -1,4 +1,4 @@
-package com.honglab.kyh_image_picker;
+package com.hongslab.kyh_image_picker;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.honglab.kyh_image_picker;
+package com.hongslab.kyh_image_picker;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -31,11 +31,11 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.honglab.kyh_image_picker.adapter.GalleryAdapter;
-import com.honglab.kyh_image_picker.model.DataVO;
-import com.honglab.kyh_image_picker.utils.Dlog;
-import com.honglab.kyh_image_picker.utils.GridSpacingItemDecoration;
-import com.honglab.kyh_image_picker.utils.PinchImageView;
+import com.hongslab.kyh_image_picker.adapter.GalleryAdapter;
+import com.hongslab.kyh_image_picker.model.DataVO;
+import com.hongslab.kyh_image_picker.utils.Dlog;
+import com.hongslab.kyh_image_picker.utils.GridSpacingItemDecoration;
+import com.hongslab.kyh_image_picker.utils.PinchImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;

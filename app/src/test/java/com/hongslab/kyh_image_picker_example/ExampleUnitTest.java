@@ -1,4 +1,4 @@
-package com.honglab.kyh_image_picker;
+package com.hongslab.kyh_image_picker_example;
 
 import org.junit.Test;
 

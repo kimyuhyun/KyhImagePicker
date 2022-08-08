@@ -6,7 +6,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.honglab.kyh_image_picker"
+        applicationId "com.hongslab.kyh_image_picker"
         minSdk 26
         targetSdk 32
         versionCode 1

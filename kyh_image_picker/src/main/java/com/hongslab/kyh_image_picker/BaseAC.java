@@ -1,4 +1,4 @@
-package com.honglab.kyh_image_picker;
+package com.hongslab.kyh_image_picker;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.exifinterface.media.ExifInterface;
 
-import com.honglab.kyh_image_picker.model.DataVO;
+import com.hongslab.kyh_image_picker.model.DataVO;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

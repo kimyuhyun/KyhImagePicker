@@ -1,4 +1,4 @@
-package com.honglab.kyh_image_picker_example;
+package com.hongslab.kyh_image_picker_example;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -12,8 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import com.honglab.kyh_image_picker.KyhImagePicker;
-import com.honglab.kyh_image_picker.R;
+import com.hongslab.kyh_image_picker.KyhImagePicker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-
 
     @BindViews({R.id.iv_0, R.id.iv_1, R.id.iv_2, R.id.iv_3, R.id.iv_4})
     List<ImageView> ivs;

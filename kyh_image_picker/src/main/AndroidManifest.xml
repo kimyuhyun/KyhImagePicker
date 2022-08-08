@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.honglab.kyh_image_picker">
+    package="com.hongslab.kyh_image_picker">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 

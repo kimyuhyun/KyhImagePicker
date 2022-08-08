@@ -1,11 +1,11 @@
-package com.honglab.kyh_image_picker.utils;
+package com.hongslab.kyh_image_picker.utils;
 
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-import com.honglab.kyh_image_picker.R;
+import com.hongslab.kyh_image_picker.R;
 
 public class TouchEffect {
     public static TouchEffect mTouchEffect;

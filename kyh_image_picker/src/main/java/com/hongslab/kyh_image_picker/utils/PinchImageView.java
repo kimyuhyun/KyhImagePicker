@@ -1,4 +1,4 @@
-package com.honglab.kyh_image_picker.utils;
+package com.hongslab.kyh_image_picker.utils;
 
 import android.animation.ValueAnimator;
 import android.content.Context;

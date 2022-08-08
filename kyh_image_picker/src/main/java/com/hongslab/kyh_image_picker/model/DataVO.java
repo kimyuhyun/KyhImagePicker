@@ -1,9 +1,9 @@
-package com.honglab.kyh_image_picker.model;
+package com.hongslab.kyh_image_picker.model;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
 
-import com.honglab.kyh_image_picker.utils.PinchImageView;
+import com.hongslab.kyh_image_picker.utils.PinchImageView;
 
 public class DataVO {
     private int seq = -1;

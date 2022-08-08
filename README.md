@@ -4,9 +4,17 @@ instagram style image picker
 - The image returns uri path as a cropped shooting image.
 - There is no single image selection, but only multi-image selection.
 
+```
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
 
 
-1. Insert the code below into the button to run the image picker.
+- Insert the code below into the button to run the image picker.
 ```
 KyhImagePicker.of(getApplicationContext())
     .setTitle("Select a picture")
@@ -15,7 +23,7 @@ KyhImagePicker.of(getApplicationContext())
     .open(startActivityResult);
 ```
 
-2. This is the part that receives the image uri path.
+- This is the part that receives the image uri path.
 ```
 public ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
     new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

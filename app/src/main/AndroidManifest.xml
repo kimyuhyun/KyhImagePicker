@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.honglab.kyh_image_picker">
+    package="com.hongslab.kyh_image_picker_example">
 
 
     <application
-        android:name="com.honglab.kyh_image_picker_example.AppInfo"
+        android:name=".AppInfo"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,11 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Kyh_image_picker">
-<!--        <activity-->
-<!--            android:name=".KyhImagePickerActivity"-->
-<!--            android:exported="false" />-->
+
         <activity
-            android:name="com.honglab.kyh_image_picker_example.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,15 +26,6 @@
             </intent-filter>
         </activity>
 
-<!--        <provider-->
-<!--            android:name="androidx.core.content.FileProvider"-->
-<!--            android:authorities="${applicationId}.fileprovider"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                android:resource="@xml/file_provider_paths" />-->
-<!--        </provider>-->
     </application>
 
 </manifest>

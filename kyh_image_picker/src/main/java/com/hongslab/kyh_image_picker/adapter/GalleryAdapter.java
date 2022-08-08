@@ -1,4 +1,4 @@
-package com.honglab.kyh_image_picker.adapter;
+package com.hongslab.kyh_image_picker.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,10 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.honglab.kyh_image_picker.BaseAC;
-import com.honglab.kyh_image_picker.R;
-import com.honglab.kyh_image_picker.model.DataVO;
-import com.honglab.kyh_image_picker.utils.TouchEffect;
+import com.hongslab.kyh_image_picker.BaseAC;
+import com.hongslab.kyh_image_picker.R;
+import com.hongslab.kyh_image_picker.model.DataVO;
+import com.hongslab.kyh_image_picker.utils.TouchEffect;
 
 import java.util.ArrayList;
 import java.util.Collections;
