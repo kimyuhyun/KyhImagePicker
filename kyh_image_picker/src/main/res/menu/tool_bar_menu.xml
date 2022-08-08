@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_camera"
+        android:icon="@drawable/ic_round_photo_camera_24"
+        android:title="ok"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/action_ok"
+        android:icon="@drawable/ic_round_check_24"
+        android:title="ok"
+        app:showAsAction="always" />
+
+
+</menu>
