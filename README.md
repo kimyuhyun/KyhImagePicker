@@ -1,6 +1,10 @@
 # KyhImagePicker
 instagram style image picker
 
+![KakaoTalk_Photo_2022-08-09-10-56-40 002](https://user-images.githubusercontent.com/29136588/183547138-8cf9168c-7a13-451e-9a01-cdf043447be0.jpeg)
+![KakaoTalk_Photo_2022-08-09-10-56-39 001](https://user-images.githubusercontent.com/29136588/183547144-9315d0d7-8f1d-4e33-a916-12e915e20bed.jpeg)
+
+
 - The image returns uri path as a cropped shooting image.
 - There is no single image selection, but only multi-image selection.
 
