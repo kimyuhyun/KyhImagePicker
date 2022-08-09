@@ -21,7 +21,7 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainAC extends AppCompatActivity {
 
     @BindViews({R.id.iv_0, R.id.iv_1, R.id.iv_2, R.id.iv_3, R.id.iv_4})
     List<ImageView> ivs;

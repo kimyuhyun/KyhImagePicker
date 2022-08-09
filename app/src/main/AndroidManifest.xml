@@ -17,7 +17,7 @@
         android:theme="@style/Theme.Kyh_image_picker">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".MainAC"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

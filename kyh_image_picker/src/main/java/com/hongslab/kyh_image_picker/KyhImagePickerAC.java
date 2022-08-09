@@ -107,24 +107,47 @@ public class KyhImagePickerAC extends BaseAC {
         mGalleryAdapter = new GalleryAdapter(this, new GalleryAdapter.AdapterClickListener() {
             @Override
             public void onClick(int pos) {
-                if (mList.get(pos).isChoose() && !mList.get(pos).isToogle()) {
+                if (!mList.get(pos).isChoose() && !mList.get(pos).isToogle()) {
                     //DESC 정렬해서 가장 큰수를 가져온다!
                     int seq = Collections.max(mList, new BaseAC.compPopulation()).getSeq();
 
+                    //리미트 카운트를 넘어서면 아무것도 하지 않는다!
                     if (seq >= mLimitCount - 1) {
                         Toast.makeText(getApplicationContext(), mLimitMessage, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    mList.get(pos).setToogle(true);
-
                     seq++;
 
+                    //번호 토글 on
+                    mList.get(pos).setToogle(true);
+
+                    //이미지 선택 on
+                    for (DataVO row : mList) {
+                        row.setChoose(false);
+                    }
+                    mList.get(pos).setChoose(true);
+
+                    //번호 넘버링한다!
                     mList.get(pos).setSeq(seq);
 
+                    //이미지를 표시!!
+                    showImage(mList.get(pos));
+
+                } else if (!mList.get(pos).isChoose() && mList.get(pos).isToogle()) {
+                    //이미지 선택 on
+                    for (DataVO row : mList) {
+                        row.setChoose(false);
+                    }
+                    mList.get(pos).setChoose(true);
+
+                    //이미지를 표시!!
+                    showImage(mList.get(pos));
                 } else if (mList.get(pos).isChoose() && mList.get(pos).isToogle()) {
                     mList.get(pos).setToogle(false);
+                    mList.get(pos).setChoose(false);
 
+                    //토글 넘버링 재배치!
                     int seq = mList.get(pos).getSeq();
                     for (DataVO row : mList) {
                         if (row.getSeq() > seq) {
@@ -132,17 +155,11 @@ public class KyhImagePickerAC extends BaseAC {
                         }
                     }
                     mList.get(pos).setSeq(-1);
-                }
 
-                for (DataVO row : mList) {
-                    row.setChoose(false);
+                    //이미지를 표시!!
+                    showImage(mList.get(pos));
                 }
-
-                mList.get(pos).setChoose(true);
-                showImage(mList.get(pos));
                 mGalleryAdapter.notifyDataSetChanged();
-
-
             }
         }, mList, width);
         recycler_view.setAdapter(mGalleryAdapter);
