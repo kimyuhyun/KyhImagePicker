@@ -53,3 +53,12 @@ public ActivityResultLauncher<Intent> startActivityResult = registerForActivityR
     });
 ```
 
+- AndroidManifest.xml
+- Add this code.
+```
+<application
+        android:requestLegacyExternalStorage="true">
+        
+</application>        
+```
+
