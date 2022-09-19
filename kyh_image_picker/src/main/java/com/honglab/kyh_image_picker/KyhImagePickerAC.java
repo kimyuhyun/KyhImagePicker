@@ -17,11 +17,13 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,10 +49,20 @@ public class KyhImagePickerAC extends BaseAC {
     private GalleryAdapter mGalleryAdapter;
     private int mLimitCount = 1;
     private String mLimitMessage = "";
+    private String mNoSelectedMessage = "";
 
     Toolbar tool_bar;
     FrameLayout fl_preview;
     RecyclerView recycler_view;
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().setStatusBarColor(Color.parseColor("#000000"));
+            getWindow().setNavigationBarColor(Color.parseColor("#000000"));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +75,7 @@ public class KyhImagePickerAC extends BaseAC {
 
         mLimitCount = getIntent().getIntExtra("limit_count", 1);
         mLimitMessage = getIntent().getStringExtra("limit_message");
+        mNoSelectedMessage = getIntent().getStringExtra("no_selected_message");
 
         tool_bar.setTitle(getIntent().getStringExtra("title"));
         setSupportActionBar(tool_bar);
@@ -90,7 +103,9 @@ public class KyhImagePickerAC extends BaseAC {
                     //DESC 정렬해서 가장 큰수를 가져온다!
                     int seq = Collections.max(mList, new BaseAC.compPopulation()).getSeq();
                     if (seq >= mLimitCount - 1) {
-                        Toast.makeText(getApplicationContext(), mLimitMessage, Toast.LENGTH_SHORT).show();
+                        if (mLimitMessage != null) {
+                            Toast.makeText(getApplicationContext(), mLimitMessage, Toast.LENGTH_SHORT).show();
+                        }
                         return;
                     }
 
@@ -243,6 +258,14 @@ public class KyhImagePickerAC extends BaseAC {
                     list.add(row);
                 }
             }
+
+            if (list.size() == 0) {
+                if (mNoSelectedMessage != null) {
+                    Toast.makeText(getApplicationContext(), mNoSelectedMessage, Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+
 
             //ASC 정렬!
             Collections.sort(list, new Comparator<DataVO>() {

@@ -19,7 +19,7 @@ allprojects {
 
 ```
 dependencies {
-    implementation 'com.github.kimyuhyun:KyhImagePicker:1.0.9'
+    implementation 'com.github.kimyuhyun:KyhImagePicker:2.0.0'
 }
 ```
 
@@ -31,6 +31,7 @@ KyhImagePicker.of(getApplicationContext())
     .setLimitCount(5)
     .setLimitMessage("You can select up to five images.")
     .setNoSelectionMessage("No image selected.")
+    .setNoSelectedMessage("Please select image.")
     .open(startActivityResult);
 ```
 

@@ -35,6 +35,11 @@ public class KyhImagePicker {
         return this;
     }
 
+    public KyhImagePicker setNoSelectedMessage(String msg) {
+        mIntent.putExtra("no_selected_message", msg);
+        return this;
+    }
+
     public void open(ActivityResultLauncher<Intent> startActivityResult) {
         startActivityResult.launch(mIntent);
     }
