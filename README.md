@@ -19,7 +19,7 @@ allprojects {
 
 ```
 dependencies {
-    implementation 'com.github.kimyuhyun:KyhImagePicker:2.0.0'
+    implementation 'com.github.kimyuhyun:KyhImagePicker:2.0.1'
 }
 ```
 
@@ -27,10 +27,9 @@ dependencies {
 - Insert the code below into the button to run the image picker.
 ```
 KyhImagePicker.of(getApplicationContext())
-    .setTitle("Select a picture")
+    .setTitle("사진선택")
     .setLimitCount(5)
-    .setLimitMessage("You can select up to five images.")
-    .setNoSelectionMessage("No image selected.")
+    .setLimitMessage("이미지는 5개까지 선택 할 수 있습니다.")
     .setNoSelectedMessage("Please select image.")
     .open(startActivityResult);
 ```
@@ -42,13 +41,12 @@ public ActivityResultLauncher<Intent> startActivityResult = registerForActivityR
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
-                ArrayList<String> list = result.getData().getStringArrayListExtra("kyh_image_picked_list");
+                ArrayList<UriVO> list = result.getData().getParcelableArrayListExtra("kyh_image_picked_list");
                 int i = 0;
-                for (String path : list) {
-                    ivs.get(i).setImageURI(Uri.parse(path));
+                for (UriVO row : list) {
+                    ivs.get(i).setImageURI(row.uri);
                     i++;
                 }
-    
             }
         }
     });

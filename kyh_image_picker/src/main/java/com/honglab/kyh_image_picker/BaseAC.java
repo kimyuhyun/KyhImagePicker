@@ -143,7 +143,7 @@ public class BaseAC extends AppCompatActivity {
         return Bitmap.createScaledBitmap(source, newWidth, newHeight, true);
     }
 
-    public String saveImage(Bitmap bmp) {
+    public Uri saveImage(Bitmap bmp) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME, "bbiribbabba" + System.currentTimeMillis() + ".png");
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/*");
@@ -175,12 +175,14 @@ public class BaseAC extends AppCompatActivity {
         values.put(MediaStore.Images.Media.IS_PENDING, 0);
         contentResolver.update(uri, values, null, null);
 
-        String filePath = getRealPathFromURI(getApplicationContext(), uri);
+//        String filePath = getRealPathFromURI(getApplicationContext(), uri);
 
         //갤러리에 추가
-        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath)));
+//        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath)));
+        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
         //
 
-        return filePath;
+//        return filePath;
+        return uri;
     }
 }

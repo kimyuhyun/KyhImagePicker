@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.honglab.kyh_image_picker.KyhImagePicker;
+import com.honglab.kyh_image_picker.model.UriVO;
 import com.honglab.kyh_image_picker_example.R;
 
 
@@ -58,11 +59,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        ArrayList<String> list = result.getData().getStringArrayListExtra("kyh_image_picked_list");
+                        ArrayList<UriVO> list = result.getData().getParcelableArrayListExtra("kyh_image_picked_list");
 
                         int i = 0;
-                        for (String path : list) {
-                            ivs.get(i).setImageURI(Uri.parse(path));
+                        for (UriVO row : list) {
+                            ivs.get(i).setImageURI(row.uri);
                             i++;
                         }
 

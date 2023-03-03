@@ -18,6 +18,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -33,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.honglab.kyh_image_picker.model.DataVO;
+import com.honglab.kyh_image_picker.model.UriVO;
 import com.honglab.kyh_image_picker.utils.GridSpacingItemDecoration;
 import com.honglab.kyh_image_picker.utils.PinchImageView;
 import com.honglab.kyh_image_picker.adapter.GalleryAdapter;
@@ -280,7 +282,7 @@ public class KyhImagePickerAC extends BaseAC {
                 }
             });
 
-            ArrayList<String> list2 = new ArrayList<>();
+            /*ArrayList<String> list2 = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 list.get(i).pinchImageView.buildDrawingCache();
                 Bitmap bmp = list.get(i).pinchImageView.getDrawingCache();
@@ -289,6 +291,19 @@ public class KyhImagePickerAC extends BaseAC {
             }
             Intent intent = new Intent();
             intent.putStringArrayListExtra("kyh_image_picked_list", list2);
+            setResult(RESULT_OK, intent);
+            finish();
+            */
+            ArrayList<UriVO> list2 = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                list.get(i).pinchImageView.buildDrawingCache();
+                Bitmap bmp = list.get(i).pinchImageView.getDrawingCache();
+                Uri uri = saveImage(bmp);
+                UriVO vo = new UriVO(uri);
+                list2.add(vo);
+            }
+            Intent intent = new Intent();
+            intent.putParcelableArrayListExtra("kyh_image_picked_list", list2);
             setResult(RESULT_OK, intent);
             finish();
             return true;
