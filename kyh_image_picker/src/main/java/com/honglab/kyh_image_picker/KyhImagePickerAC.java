@@ -1,5 +1,6 @@
 package com.honglab.kyh_image_picker;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -22,6 +24,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.DynamicLayout;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -33,6 +36,8 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.normal.TedPermission;
 import com.honglab.kyh_image_picker.model.DataVO;
 import com.honglab.kyh_image_picker.model.UriVO;
 import com.honglab.kyh_image_picker.utils.GridSpacingItemDecoration;
@@ -42,6 +47,7 @@ import com.honglab.kyh_image_picker.adapter.GalleryAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 
 public class KyhImagePickerAC extends BaseAC {
@@ -101,7 +107,7 @@ public class KyhImagePickerAC extends BaseAC {
         mGalleryAdapter = new GalleryAdapter(this, new GalleryAdapter.AdapterClickListener() {
             @Override
             public void onClick(int pos) {
-                if (mList.get(pos).isChoose() && !mList.get(pos).isToogle()) {
+                /*if (mList.get(pos).isChoose() && !mList.get(pos).isToogle()) {
                     //DESC 정렬해서 가장 큰수를 가져온다!
                     int seq = Collections.max(mList, new BaseAC.compPopulation()).getSeq();
                     if (seq >= mLimitCount - 1) {
@@ -135,61 +141,134 @@ public class KyhImagePickerAC extends BaseAC {
 
                 mList.get(pos).setChoose(true);
                 showImage(mList.get(pos));
+                mGalleryAdapter.notifyDataSetChanged();*/
+
+                if (!mList.get(pos).isChoose() && !mList.get(pos).isToogle()) {
+                    //DESC 정렬해서 가장 큰수를 가져온다!
+                    int seq = Collections.max(mList, new BaseAC.compPopulation()).getSeq();
+                    if (seq >= mLimitCount - 1) {
+                        if (mLimitMessage != null) {
+                            Toast.makeText(getApplicationContext(), mLimitMessage, Toast.LENGTH_SHORT).show();
+                        }
+                        return;
+                    }
+                    mList.get(pos).setToogle(true);
+                    seq++;
+                    mList.get(pos).setSeq(seq);
+                } else if (mList.get(pos).isChoose() && mList.get(pos).isToogle()) {
+                    mList.get(pos).setToogle(false);
+                    int seq = mList.get(pos).getSeq();
+                    for (DataVO row : mList) {
+                        if (row.getSeq() > seq) {
+                            row.setSeq(row.getSeq() - 1);
+                        }
+                    }
+                    mList.get(pos).setSeq(-1);
+                }
+
+                for (DataVO row : mList) {
+                    row.setChoose(false);
+                }
+
+                mList.get(pos).setChoose(true);
+                showImage(mList.get(pos));
                 mGalleryAdapter.notifyDataSetChanged();
-
-
             }
         }, mList, width);
         recycler_view.setAdapter(mGalleryAdapter);
 
+        String permission[] = null;
+        if (Build.VERSION.SDK_INT < 33) {
+            permission = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
+        } else {
+            permission = new String[]{Manifest.permission.READ_MEDIA_IMAGES};
+        }
+
+
+        TedPermission.create()
+                .setPermissionListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted() {
+                        loadGallery();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(List<String> deniedPermissions) {
+                        for (String row : deniedPermissions) {
+                            Log.d("####", row);
+                        }
+                    }
+                })
+                .setPermissions(permission)
+                .check();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
-        } else {
-            loadGallery();
-        }
+
+
+//        String permission[] = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_MEDIA_IMAGES};
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, permission, 101);
+//        } else {
+//            loadGallery();
+//        }
     }
 
     private void loadGallery() {
+        Log.d("####", "loadGallery");
         mList.clear();
 
-        String[] what = new String[]{
+        String[] projection = new String[]{
                 MediaStore.Images.ImageColumns._ID,
                 MediaStore.Images.ImageColumns.DATA,
-                MediaStore.Images.ImageColumns.DATE_ADDED
+                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.Images.ImageColumns.MIME_TYPE
         };
 
-        String where = "";
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            where = MediaStore.Images.Media.SIZE + " > 0";
-        }
+//        String selection =
+//                MediaStore.Files.FileColumns.MIME_TYPE + " = ? OR " +
+//                        MediaStore.Files.FileColumns.MIME_TYPE + " = ?  OR " +
+//                        MediaStore.Files.FileColumns.MIME_TYPE + " = ?";
+//        String[] whereArgs = new String[]{"image/jpeg", "image/png", "image/jpg"};
+
+        String selection = MediaStore.Images.Media.SIZE + " > 0";
+
+        String[] sortArgs = new String[]{MediaStore.Images.ImageColumns.DATE_TAKEN};
+
+        Bundle queryArgs = new Bundle();
+        queryArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortArgs);
+        queryArgs.putInt(ContentResolver.QUERY_ARG_SORT_DIRECTION, ContentResolver.QUERY_SORT_DIRECTION_DESCENDING);
+        queryArgs.putString(ContentResolver.QUERY_ARG_SQL_SELECTION, selection);
+//        queryArgs.putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, whereArgs);
+//        queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, 10);
+
 
         Cursor cursor = getContentResolver()
                 .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        what,
-                        where,
-                        null,
-                        MediaStore.Images.ImageColumns.DATE_ADDED + " DESC");
+                        projection,
+                        queryArgs,
+                        null);
 
-        int dataColumnIndex = cursor.getColumnIndex(what[1]);
         while (cursor.moveToNext()) {
-            String absolutePathOfImage = cursor.getString(dataColumnIndex);
+            String absolutePathOfImage = cursor.getString(1);
             if (!TextUtils.isEmpty(absolutePathOfImage)) {
-
                 if (!absolutePathOfImage.contains("bbiribbabba")) {
                     DataVO vo = new DataVO();
                     vo.setPath(absolutePathOfImage);
                     mList.add(vo);
+
                 }
             }
-        }
-        mGalleryAdapter.notifyDataSetChanged();
+        }// end while
+        cursor.close();
 
+
+        Log.d("####", "mList.size(): " + mList.size());
+
+        mGalleryAdapter.notifyDataSetChanged();
     }
 
 
@@ -319,16 +398,16 @@ public class KyhImagePickerAC extends BaseAC {
         return true;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 101: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    loadGallery();
-                }
-                return;
-            }
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case 101: {
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    loadGallery();
+//                }
+//                return;
+//            }
+//        }
+//    }
 }

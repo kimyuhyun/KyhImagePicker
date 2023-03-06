@@ -51,7 +51,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         try {
             Glide.with(context)
                     .load(item.getPath())
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(itemViewHolder.iv_thumb);
         } catch (Exception e) {
             e.printStackTrace();

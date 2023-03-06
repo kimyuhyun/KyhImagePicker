@@ -19,7 +19,7 @@ allprojects {
 
 ```
 dependencies {
-    implementation 'com.github.kimyuhyun:KyhImagePicker:2.0.1'
+    implementation 'com.github.kimyuhyun:KyhImagePicker:2.0.2'
 }
 ```
 
@@ -50,14 +50,5 @@ public ActivityResultLauncher<Intent> startActivityResult = registerForActivityR
             }
         }
     });
-```
-
-- AndroidManifest.xml
-- Add this code.
-```
-<application
-        android:requestLegacyExternalStorage="true">
-        
-</application>        
 ```
 
