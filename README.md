@@ -7,6 +7,11 @@ instagram style image picker
 
 - The image returns uri path as a cropped shooting image.
 - There is no single image selection, but only multi-image selection.
+```
+<application
+    android:requestLegacyExternalStorage="true"
+    ...>
+```
 
 ```
 allprojects {
