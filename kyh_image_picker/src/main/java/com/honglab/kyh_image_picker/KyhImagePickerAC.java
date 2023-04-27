@@ -1,10 +1,6 @@
 package com.honglab.kyh_image_picker;
 
-import androidx.annotation.LongDef;
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import androidx.exifinterface.media.ExifInterface;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -23,8 +19,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.DynamicLayout;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,7 +28,9 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -58,9 +56,12 @@ public class KyhImagePickerAC extends BaseAC {
     private int mLimitCount = 1;
     private String mLimitMessage = "";
     private String mNoSelectedMessage = "";
+    private boolean isFullFrameMode = false;
+    private DataVO mSelectedItem = new DataVO();
 
     Toolbar tool_bar;
     FrameLayout fl_preview;
+    ImageView btn_full_frame;
     RecyclerView recycler_view;
 
     @Override
@@ -77,8 +78,10 @@ public class KyhImagePickerAC extends BaseAC {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kyh_image_picker);
 
+
         tool_bar = (Toolbar) findViewById(R.id.tool_bar);
         fl_preview = (FrameLayout) findViewById(R.id.fl_preview);
+        btn_full_frame = (ImageView) findViewById(R.id.btn_full_frame);
         recycler_view = (RecyclerView) findViewById(R.id.recycler_view);
 
         mLimitCount = getIntent().getIntExtra("limit_count", 1);
@@ -107,43 +110,8 @@ public class KyhImagePickerAC extends BaseAC {
         mGalleryAdapter = new GalleryAdapter(this, new GalleryAdapter.AdapterClickListener() {
             @Override
             public void onClick(int pos) {
-                /*if (mList.get(pos).isChoose() && !mList.get(pos).isToogle()) {
-                    //DESC 정렬해서 가장 큰수를 가져온다!
-                    int seq = Collections.max(mList, new BaseAC.compPopulation()).getSeq();
-                    if (seq >= mLimitCount - 1) {
-                        if (mLimitMessage != null) {
-                            Toast.makeText(getApplicationContext(), mLimitMessage, Toast.LENGTH_SHORT).show();
-                        }
-                        return;
-                    }
-
-                    mList.get(pos).setToogle(true);
-
-                    seq++;
-
-                    mList.get(pos).setSeq(seq);
-
-                } else if (mList.get(pos).isChoose() && mList.get(pos).isToogle()) {
-                    mList.get(pos).setToogle(false);
-
-                    int seq = mList.get(pos).getSeq();
-                    for (DataVO row : mList) {
-                        if (row.getSeq() > seq) {
-                            row.setSeq(row.getSeq() - 1);
-                        }
-                    }
-                    mList.get(pos).setSeq(-1);
-                }
-
-                for (DataVO row : mList) {
-                    row.setChoose(false);
-                }
-
-                mList.get(pos).setChoose(true);
-                showImage(mList.get(pos));
-                mGalleryAdapter.notifyDataSetChanged();*/
-
-                if (!mList.get(pos).isChoose() && !mList.get(pos).isToogle()) {
+                Log.d("####", mList.get(pos).isChoose() + " : " + mList.get(pos).isToogle());
+                if (!mList.get(pos).isToogle()) {
                     //DESC 정렬해서 가장 큰수를 가져온다!
                     int seq = Collections.max(mList, new BaseAC.compPopulation()).getSeq();
                     if (seq >= mLimitCount - 1) {
@@ -177,10 +145,8 @@ public class KyhImagePickerAC extends BaseAC {
         }, mList, width);
         recycler_view.setAdapter(mGalleryAdapter);
 
-        String permission[] = null;
-        if (Build.VERSION.SDK_INT < 33) {
-            permission = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
-        } else {
+        String permission[] = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (Build.VERSION.SDK_INT >= 33) {
             permission = new String[]{Manifest.permission.READ_MEDIA_IMAGES};
         }
 
@@ -201,6 +167,33 @@ public class KyhImagePickerAC extends BaseAC {
                 })
                 .setPermissions(permission)
                 .check();
+
+        btn_full_frame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSelectedItem.pinchImageView == null) {
+                    return;
+                }
+
+                isFullFrameMode = !isFullFrameMode;
+
+                if (isFullFrameMode) {
+                    btn_full_frame.setBackgroundResource(R.drawable.circle_accent);
+                    mSelectedItem.pinchImageView.setFullFrame();
+                } else {
+                    btn_full_frame.setBackgroundResource(R.drawable.circle_grey);
+                }
+            }
+        });
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mList.size() > 0) {
+                    showImage(mList.get(0));
+                }
+            }
+        }, 200);
 
     }
 
@@ -259,7 +252,6 @@ public class KyhImagePickerAC extends BaseAC {
                     DataVO vo = new DataVO();
                     vo.setPath(absolutePathOfImage);
                     mList.add(vo);
-
                 }
             }
         }// end while
@@ -273,11 +265,22 @@ public class KyhImagePickerAC extends BaseAC {
 
 
     private void showImage(DataVO item) {
+        mSelectedItem = item;
+
         fl_preview.removeAllViews();
 
         //이미 생성되었다면..
         if (item.pinchImageView != null) {
             fl_preview.addView(item.pinchImageView);
+
+            if (isFullFrameMode) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        item.pinchImageView.setFullFrame();
+                    }
+                }, 200);
+            }
             return;
         }
 
@@ -296,13 +299,27 @@ public class KyhImagePickerAC extends BaseAC {
             int exifDegree = exifOrientationToDegrees(exifOrientation);
             image = rotate(image, exifDegree);
 
-            // 변환된 이미지 사용
+            float scale = 0f;
+            if (image.getWidth() > image.getHeight()) {
+                scale = (float) screenWidth / image.getHeight();
+            } else if (image.getWidth() < image.getHeight()) {
+                scale = (float) screenWidth / image.getWidth();
+            }
 
-
-            item.pinchImageView = new PinchImageView(getApplicationContext());
-            item.pinchImageView.setImageBitmap(image);
-
+            PinchImageView pinchImageView = new PinchImageView(getApplicationContext());
+            pinchImageView.setScale(scale);
+            pinchImageView.setImageBitmap(image);
+            item.pinchImageView = pinchImageView;
             fl_preview.addView(item.pinchImageView);
+
+            if (isFullFrameMode) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        item.pinchImageView.setFullFrame();
+                    }
+                }, 200);
+            }
 
 
         } catch (Exception e) {
@@ -380,11 +397,13 @@ public class KyhImagePickerAC extends BaseAC {
                 Uri uri = saveImage(bmp);
                 UriVO vo = new UriVO(uri);
                 list2.add(vo);
+
             }
+
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra("kyh_image_picked_list", list2);
             setResult(RESULT_OK, intent);
-            finish();
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -398,7 +417,13 @@ public class KyhImagePickerAC extends BaseAC {
         return true;
     }
 
-//    @Override
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0, 0);
+    }
+
+    //    @Override
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 //        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 //        switch (requestCode) {

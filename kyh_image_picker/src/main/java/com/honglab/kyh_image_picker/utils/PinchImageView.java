@@ -7,6 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -954,6 +955,7 @@ public class PinchImageView extends androidx.appcompat.widget.AppCompatImageView
         //但是有可能外部设定了不规范的值.
         //但是后续的scale操作会将xy不等的缩放值纠正,改成和x方向相同
         mScaleBase = MathUtils.getMatrixScale(mOuterMatrix)[0] / MathUtils.getDistance(x1, y1, x2, y2);
+        Log.d("####", "mScaleBase: " + mScaleBase);
         //两手指的中点在屏幕上落在了图片的某个点上,图片上的这个点在经过总矩阵变换后和手指中点相同
         //现在我们需要得到图片上这个点在图片是fit center状态下在屏幕上的位置
         //因为后续的计算都是基于图片是fit center状态下进行变换
@@ -1007,6 +1009,7 @@ public class PinchImageView extends androidx.appcompat.widget.AppCompatImageView
         if (!isReady()) {
             return;
         }
+
         //获取第一层变换矩阵
         Matrix innerMatrix = MathUtils.matrixTake();
         getInnerMatrix(innerMatrix);
@@ -1021,6 +1024,84 @@ public class PinchImageView extends androidx.appcompat.widget.AppCompatImageView
         float maxScale = getMaxScale();
         //接下来要放大的大小
         float nextScale = calculateNextScale(innerScale, outerScale);
+        nextScale = _scale;
+        //如果接下来放大大于最大值或者小于fit center值，则取边界
+        if (nextScale > maxScale) {
+            nextScale = maxScale;
+        }
+        if (nextScale < innerScale) {
+            nextScale = innerScale;
+        }
+        //开始计算缩放动画的结果矩阵
+        Matrix animEnd = MathUtils.matrixTake(mOuterMatrix);
+        //计算还需缩放的倍数
+        animEnd.postScale(nextScale / currentScale, nextScale / currentScale, x, y);
+        //将放大点移动到控件中心
+        animEnd.postTranslate(displayWidth / 2f - x, displayHeight / 2f - y);
+        //得到放大之后的图片方框
+        Matrix testMatrix = MathUtils.matrixTake(innerMatrix);
+        testMatrix.postConcat(animEnd);
+        RectF testBound = MathUtils.rectFTake(0, 0, getDrawable().getIntrinsicWidth(), getDrawable().getIntrinsicHeight());
+        testMatrix.mapRect(testBound);
+        //修正位置
+        float postX = 0;
+        float postY = 0;
+        if (testBound.right - testBound.left < displayWidth) {
+            postX = displayWidth / 2f - (testBound.right + testBound.left) / 2f;
+        } else if (testBound.left > 0) {
+            postX = -testBound.left;
+        } else if (testBound.right < displayWidth) {
+            postX = displayWidth - testBound.right;
+        }
+        if (testBound.bottom - testBound.top < displayHeight) {
+            postY = displayHeight / 2f - (testBound.bottom + testBound.top) / 2f;
+        } else if (testBound.top > 0) {
+            postY = -testBound.top;
+        } else if (testBound.bottom < displayHeight) {
+            postY = displayHeight - testBound.bottom;
+        }
+        //应用修正位置
+        animEnd.postTranslate(postX, postY);
+        //清理当前可能正在执行的动画
+        cancelAllAnimator();
+        //启动矩阵动画
+        mScaleAnimator = new ScaleAnimator(mOuterMatrix, animEnd);
+        mScaleAnimator.start();
+        //清理临时变量
+        MathUtils.rectFGiven(testBound);
+        MathUtils.matrixGiven(testMatrix);
+        MathUtils.matrixGiven(animEnd);
+        MathUtils.matrixGiven(innerMatrix);
+    }
+
+    float _scale = 0;
+
+    public void setScale(float scale) {
+        _scale = scale;
+    }
+
+    public void setFullFrame() {
+        if (!isReady()) {
+            return;
+        }
+
+        float x = getWidth() / 2;
+        float y = getHeight() / 2;
+
+        //获取第一层变换矩阵
+        Matrix innerMatrix = MathUtils.matrixTake();
+        getInnerMatrix(innerMatrix);
+        //当前总的缩放比例
+        float innerScale = MathUtils.getMatrixScale(innerMatrix)[0];
+        float outerScale = MathUtils.getMatrixScale(mOuterMatrix)[0];
+        float currentScale = innerScale * outerScale;
+        //控件大小
+        float displayWidth = getWidth();
+        float displayHeight = getHeight();
+        //最大放大大小
+        float maxScale = getMaxScale();
+        //接下来要放大的大小
+        float nextScale = _scale;
         //如果接下来放大大于最大值或者小于fit center值，则取边界
         if (nextScale > maxScale) {
             nextScale = maxScale;

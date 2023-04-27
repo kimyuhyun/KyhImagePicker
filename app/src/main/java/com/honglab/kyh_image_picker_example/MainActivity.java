@@ -8,13 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.honglab.kyh_image_picker.KyhImagePicker;
 import com.honglab.kyh_image_picker.model.UriVO;
-import com.honglab.kyh_image_picker_example.R;
 
 
 import java.util.ArrayList;
@@ -60,13 +59,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         ArrayList<UriVO> list = result.getData().getParcelableArrayListExtra("kyh_image_picked_list");
-
-                        int i = 0;
-                        for (UriVO row : list) {
-                            ivs.get(i).setImageURI(row.uri);
-                            i++;
+                        for (int i = 0; i < list.size(); i++) {
+                            ivs.get(i).setImageURI(list.get(i).uri);
                         }
-
                     }
                 }
             });

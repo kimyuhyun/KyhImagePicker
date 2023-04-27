@@ -8,20 +8,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.honglab.kyh_image_picker.BaseAC;
 import com.honglab.kyh_image_picker.R;
 import com.honglab.kyh_image_picker.model.DataVO;
 import com.honglab.kyh_image_picker.utils.TouchEffect;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
@@ -45,6 +42,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        holder.setIsRecyclable(false);
+
         ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         DataVO item = list.get(position);
 
@@ -64,10 +63,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         if (item.isToogle()) {
-            itemViewHolder.tv_count.setBackgroundResource(R.drawable.circle_green);
+            itemViewHolder.tv_count.setBackgroundResource(R.drawable.circle_accent);
             itemViewHolder.tv_count.setText("" + (item.getSeq() + 1));
         } else {
-            itemViewHolder.tv_count.setBackgroundResource(R.drawable.circle_green_border);
+            itemViewHolder.tv_count.setBackgroundResource(R.drawable.circle_accent_border);
         }
     }
 
