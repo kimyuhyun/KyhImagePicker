@@ -8,9 +8,7 @@ instagram style image picker
 - The image returns uri path as a cropped shooting image.
 - There is no single image selection, but only multi-image selection.
 ```
-<application
-    android:requestLegacyExternalStorage="true"
-    ...>
+<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 ```
 
 ```
@@ -24,7 +22,7 @@ allprojects {
 
 ```
 dependencies {
-    implementation 'com.github.kimyuhyun:KyhImagePicker:2.0.2'
+    implementation 'com.github.kimyuhyun:KyhImagePicker:x.y.z'
 }
 ```
 
@@ -47,10 +45,8 @@ public ActivityResultLauncher<Intent> startActivityResult = registerForActivityR
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
                 ArrayList<UriVO> list = result.getData().getParcelableArrayListExtra("kyh_image_picked_list");
-                int i = 0;
-                for (UriVO row : list) {
-                    ivs.get(i).setImageURI(row.uri);
-                    i++;
+                for (int i = 0; i < list.size(); i++) {
+                    ivs.get(i).setImageURI(list.get(i).uri);
                 }
             }
         }
