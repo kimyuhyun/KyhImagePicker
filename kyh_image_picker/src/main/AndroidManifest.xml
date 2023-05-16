@@ -3,14 +3,28 @@
 
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32"/>
-    <uses-permission
-        android:name="android.permission.READ_MEDIA_IMAGES" />
+        android:maxSdkVersion="32" />
 
-    <application>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
+        android:supportsRtl="true">
         <activity
             android:name=".KyhImagePickerAC"
-            android:exported="true" />
+            android:configChanges="screenSize|orientation"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ProxyAC"
+            android:configChanges="screenSize|orientation"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
     </application>
 

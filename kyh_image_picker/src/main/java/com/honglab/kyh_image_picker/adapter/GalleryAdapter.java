@@ -1,6 +1,8 @@
 package com.honglab.kyh_image_picker.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +17,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.honglab.kyh_image_picker.R;
 import com.honglab.kyh_image_picker.model.DataVO;
-import com.honglab.kyh_image_picker.utils.TouchEffect;
 
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        holder.setIsRecyclable(false);
+//        holder.setIsRecyclable(false);
 
         ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         DataVO item = list.get(position);
@@ -51,6 +52,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             Glide.with(context)
                     .load(item.getPath())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop()
                     .into(itemViewHolder.iv_thumb);
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,8 +90,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             iv_thumb = (ImageView) view.findViewById(R.id.iv_thumb);
             fl_selected = (FrameLayout) view.findViewById(R.id.fl_selected);
             tv_count = (TextView) view.findViewById(R.id.tv_count);
-
-            TouchEffect.getInstance().apply(root);
 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, width);
             root.setLayoutParams(params);

@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Comparator;
 
-public class BaseAC extends AppCompatActivity {
+public class KyhBaseAC extends AppCompatActivity {
 
 
     @Override

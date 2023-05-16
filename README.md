@@ -7,11 +7,6 @@ instagram style image picker
 
 - The image returns uri path as a cropped shooting image.
 - There is no single image selection, but only multi-image selection.
-```
-<application
-    android:requestLegacyExternalStorage="true"
-    ...>
-```
 
 ```
 allprojects {
@@ -24,7 +19,7 @@ allprojects {
 
 ```
 dependencies {
-    implementation 'com.github.kimyuhyun:KyhImagePicker:2.0.2'
+    implementation 'com.github.kimyuhyun:KyhImagePicker:2.3.2'
 }
 ```
 
@@ -32,28 +27,17 @@ dependencies {
 - Insert the code below into the button to run the image picker.
 ```
 KyhImagePicker.of(getApplicationContext())
-    .setTitle("사진선택")
+    .setTitle("Select photo")
     .setLimitCount(5)
-    .setLimitMessage("이미지는 5개까지 선택 할 수 있습니다.")
+    .setLimitMessage("Up to 5 images can be selected.")
     .setNoSelectedMessage("Please select image.")
-    .open(startActivityResult);
-```
-
-- This is the part that receives the image uri path.
-```
-public ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
-    new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                ArrayList<UriVO> list = result.getData().getParcelableArrayListExtra("kyh_image_picked_list");
-                int i = 0;
-                for (UriVO row : list) {
-                    ivs.get(i).setImageURI(row.uri);
-                    i++;
-                }
+    .setListener((resultCode, data) -> {
+        if (resultCode == Activity.RESULT_OK) {
+            ArrayList<UriVO> list = data.getParcelableArrayListExtra("kyh_image_picked_list");
+            for (int i = 0; i < list.size(); i++) {
+                imageViewArrayList.get(i).setImageURI(list.get(i).uri);
             }
         }
-    });
+    }).startActivityForResult();
 ```
 

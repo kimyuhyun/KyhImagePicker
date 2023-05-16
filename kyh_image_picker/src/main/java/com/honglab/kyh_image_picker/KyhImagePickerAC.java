@@ -2,6 +2,8 @@ package com.honglab.kyh_image_picker;
 
 import androidx.appcompat.widget.Toolbar;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +30,6 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -48,7 +49,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class KyhImagePickerAC extends BaseAC {
+public class KyhImagePickerAC extends KyhBaseAC {
     private int screenWidth = 0;
     private int width = 0;
     private ArrayList<DataVO> mList = new ArrayList<>();
@@ -113,7 +114,7 @@ public class KyhImagePickerAC extends BaseAC {
                 Log.d("####", mList.get(pos).isChoose() + " : " + mList.get(pos).isToogle());
                 if (!mList.get(pos).isToogle()) {
                     //DESC 정렬해서 가장 큰수를 가져온다!
-                    int seq = Collections.max(mList, new BaseAC.compPopulation()).getSeq();
+                    int seq = Collections.max(mList, new KyhBaseAC.compPopulation()).getSeq();
                     if (seq >= mLimitCount - 1) {
                         if (mLimitMessage != null) {
                             Toast.makeText(getApplicationContext(), mLimitMessage, Toast.LENGTH_SHORT).show();
@@ -150,7 +151,6 @@ public class KyhImagePickerAC extends BaseAC {
             permission = new String[]{Manifest.permission.READ_MEDIA_IMAGES};
         }
 
-
         TedPermission.create()
                 .setPermissionListener(new PermissionListener() {
                     @Override
@@ -168,21 +168,18 @@ public class KyhImagePickerAC extends BaseAC {
                 .setPermissions(permission)
                 .check();
 
-        btn_full_frame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mSelectedItem.pinchImageView == null) {
-                    return;
-                }
+        btn_full_frame.setOnClickListener(v -> {
+            if (mSelectedItem.pinchImageView == null) {
+                return;
+            }
 
-                isFullFrameMode = !isFullFrameMode;
+            isFullFrameMode = !isFullFrameMode;
 
-                if (isFullFrameMode) {
-                    btn_full_frame.setBackgroundResource(R.drawable.circle_accent);
-                    mSelectedItem.pinchImageView.setFullFrame();
-                } else {
-                    btn_full_frame.setBackgroundResource(R.drawable.circle_grey);
-                }
+            if (isFullFrameMode) {
+                btn_full_frame.setBackgroundResource(R.drawable.circle_accent);
+                mSelectedItem.pinchImageView.setFullFrame();
+            } else {
+                btn_full_frame.setBackgroundResource(R.drawable.circle_grey);
             }
         });
 
@@ -200,14 +197,17 @@ public class KyhImagePickerAC extends BaseAC {
     @Override
     protected void onResume() {
         super.onResume();
-
-
-//        String permission[] = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_MEDIA_IMAGES};
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, permission, 101);
-//        } else {
-//            loadGallery();
-//        }
+        Log.d("####", "isCameraOpen: " + isCameraOpen);
+        if (isCameraOpen) {
+//            String permission[] = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_MEDIA_IMAGES};
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(this, permission, 101);
+//            } else {
+//                loadGallery();
+//            }
+            loadGallery();
+            isCameraOpen = false;
+        }
     }
 
     private void loadGallery() {
@@ -217,19 +217,12 @@ public class KyhImagePickerAC extends BaseAC {
         String[] projection = new String[]{
                 MediaStore.Images.ImageColumns._ID,
                 MediaStore.Images.ImageColumns.DATA,
-                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.Images.ImageColumns.DATE_ADDED,
                 MediaStore.Images.ImageColumns.MIME_TYPE
         };
 
-//        String selection =
-//                MediaStore.Files.FileColumns.MIME_TYPE + " = ? OR " +
-//                        MediaStore.Files.FileColumns.MIME_TYPE + " = ?  OR " +
-//                        MediaStore.Files.FileColumns.MIME_TYPE + " = ?";
-//        String[] whereArgs = new String[]{"image/jpeg", "image/png", "image/jpg"};
-
         String selection = MediaStore.Images.Media.SIZE + " > 0";
-
-        String[] sortArgs = new String[]{MediaStore.Images.ImageColumns.DATE_TAKEN};
+        String[] sortArgs = new String[]{MediaStore.Images.ImageColumns.DATE_ADDED};
 
         Bundle queryArgs = new Bundle();
         queryArgs.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, sortArgs);
@@ -258,13 +251,12 @@ public class KyhImagePickerAC extends BaseAC {
         cursor.close();
 
 
-        Log.d("####", "mList.size(): " + mList.size());
-
         mGalleryAdapter.notifyDataSetChanged();
     }
 
 
     private void showImage(DataVO item) {
+        Log.d("####", "showImage " + item.getPath());
         mSelectedItem = item;
 
         fl_preview.removeAllViews();
@@ -327,6 +319,7 @@ public class KyhImagePickerAC extends BaseAC {
         }
     }
 
+    private boolean isCameraOpen = false;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -344,6 +337,7 @@ public class KyhImagePickerAC extends BaseAC {
                 intent.setAction(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
                 startActivity(intent);
+                isCameraOpen = true;
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "There is no default camera app.", Toast.LENGTH_SHORT).show();
             }
@@ -378,18 +372,7 @@ public class KyhImagePickerAC extends BaseAC {
                 }
             });
 
-            /*ArrayList<String> list2 = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
-                list.get(i).pinchImageView.buildDrawingCache();
-                Bitmap bmp = list.get(i).pinchImageView.getDrawingCache();
-                String filePath = saveImage(bmp);
-                list2.add(filePath);
-            }
-            Intent intent = new Intent();
-            intent.putStringArrayListExtra("kyh_image_picked_list", list2);
-            setResult(RESULT_OK, intent);
-            finish();
-            */
+
             ArrayList<UriVO> list2 = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 list.get(i).pinchImageView.buildDrawingCache();
@@ -397,7 +380,6 @@ public class KyhImagePickerAC extends BaseAC {
                 Uri uri = saveImage(bmp);
                 UriVO vo = new UriVO(uri);
                 list2.add(vo);
-
             }
 
             Intent intent = new Intent();

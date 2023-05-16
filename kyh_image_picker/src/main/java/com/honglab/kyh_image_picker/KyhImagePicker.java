@@ -3,12 +3,11 @@ package com.honglab.kyh_image_picker;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.activity.result.ActivityResultLauncher;
-
 
 public class KyhImagePicker {
     private Context mContext;
     private Intent mIntent;
+    private OnACResultListener listener;
 
     public static KyhImagePicker of(Context context) {
         return new KyhImagePicker(context);
@@ -40,8 +39,13 @@ public class KyhImagePicker {
         return this;
     }
 
-    public void open(ActivityResultLauncher<Intent> startActivityResult) {
-        startActivityResult.launch(mIntent);
+    public void startActivityForResult() {
+        ProxyAC.startActivityForResult(mContext, mIntent, listener);
+    }
+
+    public KyhImagePicker setListener(OnACResultListener listener) {
+        this.listener = listener;
+        return this;
     }
 
 
